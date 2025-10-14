@@ -1,0 +1,25 @@
+[rules]
+
+[environment]
+python-version = "3.14"
+
+root = ["./src"]
+
+[src]
+include = ["src", "tests"]
+exclude = [
+  "build", "dist", ".venv",
+  "node_modules",
+  "alembic", "migrations",
+]
+
+[[overrides]]
+include = ["tests/**", "**/test_*.py"]
+[overrides.rules]
+possibly-unresolved-reference = "warn"
+
+[[overrides]]
+include = ["alembic/**", "migrations/**"]
+[overrides.rules]
+unresolved-import = "ignore"
+possibly-unresolved-reference = "ignore"
