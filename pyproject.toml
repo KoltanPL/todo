@@ -4,10 +4,64 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "pytest-cov>=7.0.0",
+]
 
 [dependency-groups]
 dev = [
+    "pytest>=8.4.2",
     "ruff>=0.14.0",
     "ty>=0.0.1a22",
 ]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = [
+  "-ra",
+  "-q",
+  "--strict-config",
+  "--strict-markers",
+  "--maxfail=1",
+  "--cov=src",
+  "--cov-report=term-missing:skip-covered",
+  "--cov-report=xml:coverage.xml",
+  "--cov-fail-under=100"
+]
+filterwarnings = [
+  "error::DeprecationWarning",
+  "error::FutureWarning",
+  # allow noisy libs:
+  "ignore::DeprecationWarning:pkg_resources",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+omit = [
+  "*/__init__.py",
+  "*/tests/*",
+  "*/alembic/*",
+  "*/migrations/*",
+  "*/.venv/*",
+]
+
+[tool.coverage.report]
+precision = 2
+skip_covered = true
+show_missing = true
+exclude_lines = [
+  "pragma: no cover",
+  "if __name__ == .__main__.:",
+  "raise NotImplementedError",
+  "abstractmethod",
+  "pass",
+]
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[tool.coverage.html]
+directory = "htmlcov"
