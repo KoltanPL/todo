@@ -1,0 +1,76 @@
+# ========================================
+# Ruff configuration – Enterprise / Python 3.14
+# Compatible with Ruff >= 0.6.x
+# ========================================
+
+target-version = "py314"
+line-length = 120
+indent-width = 4
+
+fix = true
+unsafe-fixes = false
+show-fixes = true
+preview = true
+cache-dir = ".ruff_cache"
+
+# ========================================
+# Linter section (new standard)
+# ========================================
+[lint]
+select = [
+    "F", "E", "W", "I", "UP", "N", "A", "S", "B", "C4", "PIE", "PT",
+    "RET", "SIM", "PL", "ARG", "RUF", "TCH", "TID", "DTZ", "ERA",
+    "G", "LOG", "TRY", "ASYNC", "FBT", "PERF"
+]
+
+ignore = [
+    "E501", "PLR0913", "PLR2004", "TRY003", "S101", "S404"
+]
+
+extend-select = ["ANN"]  # typing annotations enforcement
+
+[lint.per-file-ignores]
+"tests/*" = ["S101", "PLR2004", "FBT001", "FBT002", "TRY", "ARG001"]
+"scripts/*" = ["T201", "S101"]
+"alembic/*" = ["E402", "F401"]
+
+# ========================================
+# isort-compatible import sorting
+# ========================================
+[lint.isort]
+known-first-party = ["src", "app", "api", "core", "tests"]
+known-third-party = ["fastapi", "pydantic", "sqlalchemy", "polars", "langchain"]
+combine-as-imports = true
+force-sort-within-sections = true
+lines-after-imports = 2
+case-sensitive = false
+order-by-type = true
+
+# ========================================
+# Complexity limits
+# ========================================
+[lint.mccabe]
+max-complexity = 12
+
+[lint.pylint]
+max-branches = 12
+max-returns = 6
+max-args = 8
+
+# ========================================
+# Naming rules
+# ========================================
+[lint.pep8-naming]
+ignore-names = ["_"]
+classmethod-decorators = ["classmethod", "validator", "field_validator"]
+
+# ========================================
+# Formatter (Ruff-format)
+# ========================================
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+skip-magic-trailing-comma = false
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
