@@ -1,0 +1,30 @@
+minimum_pre_commit_version: "3.5.0"
+
+default_language_version:
+  python: python3
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.1
+    hooks:
+      - id: ruff-format
+        stages: [pre-commit]
+      - id: ruff-check
+        args: [--fix]
+        stages: [pre-commit]
+
+  - repo: local
+    hooks:
+      - id: ty
+        name: ty (type-check)
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+        entry: bash -lc 'PY=./.venv/bin/python; [ -x "$PY" ] || PY=python; "$PY" -m ty check'
+
+      - id: pytest
+        name: pytest (smoke on push)
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+        entry: bash -lc 'PY=./.venv/bin/python; [ -x "$PY" ] || PY=python; "$PY" -m pytest -q'

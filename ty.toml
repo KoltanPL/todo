@@ -3,10 +3,10 @@
 [environment]
 python-version = "3.14"
 
-root = ["./src"]
+root = ["."]
 
 [src]
-include = ["src", "tests"]
+include = [".", "src", "tests"]
 exclude = [
   "build", "dist", ".venv",
   "node_modules",
