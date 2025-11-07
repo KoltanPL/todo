@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+import re
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
@@ -7,6 +8,7 @@ from src.enums.status_enum import StatusEnum
 
 
 if TYPE_CHECKING:  # pragma: no cover
+    from collections.abc import Iterable
     from datetime import date
 
 
@@ -57,7 +59,7 @@ class Todo:
         self.priority = priority
         self.created_at = created_at if created_at is not None else datetime.now(tz=UTC)
         self.deadline = deadline
-        self.tags = tags if tags is not None else []
+        self.tags = tags
         self.status = status
         self.idx = idx
 
@@ -138,3 +140,87 @@ class Todo:
         elif value < self.created_at.date():
             raise ValueError(f"Deadline {value} is invalid, date should be from the future.")
         self._deadline = value
+
+    @property
+    def tags(self) -> list[str]:
+        """Get the list of tags assigned to the task.
+
+        Returns:
+            A list of normalized tag strings associated with the task.
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, value: list[str] | None) -> None:
+        """Set or update the list of tags for the task.
+
+        Tags are automatically normalized (lowercased, stripped, and deduplicated).
+
+        Args:
+            value: A list of tag strings or None to clear all tags.
+        """
+        if value is None:
+            self._tags = []
+        else:
+            self._tags = self._unique_values([self._normalize(tag) for tag in value])
+
+    @staticmethod
+    def _normalize(text: str) -> str:
+        """Normalize text for consistent tag formatting.
+
+        This method:
+          * Converts text to lowercase,
+          * Replaces multiple spaces, tabs, or newlines with a single space,
+          * Strips leading and trailing whitespace.
+
+        Args:
+            text: The tag string to normalize.
+
+        Returns:
+            A normalized lowercase string with single spaces.
+        """
+        return re.sub(r"\s{2,}", " ", text).lower().strip()
+
+    @staticmethod
+    def _unique_values(values: Iterable[str]) -> list[str]:
+        """Remove duplicates from an iterable while preserving order.
+
+        Args:
+            values: An iterable of strings.
+
+        Returns:
+            A list containing unique values in their original order.
+        """
+        seen: set[str] = set()
+        out: list[str] = []
+
+        for value in values:
+            if value not in seen:
+                seen.add(value)
+                out.append(value)
+        return out
+
+    def add_tag(self, tag: str) -> None:
+        """Add a single tag to the task.
+
+        The tag will be normalized before insertion.
+        If the tag already exists (case-insensitive), it will not be added again.
+
+        Args:
+            tag: The tag string to add.
+        """
+        tag_ = self._normalize(tag)
+        if tag_ not in self.tags:
+            self.tags.append(tag_)
+
+    def remove_tag(self, tag: str) -> None:
+        """Remove a tag from the task if it exists.
+
+        The tag is normalized before removal, ensuring consistent comparison.
+
+        Args:
+            tag: The tag string to remove. If it does not exist, no action is taken.
+        """
+        tag_ = self._normalize(tag)
+        if tag_ in self.tags:
+            self.tags.remove(tag_)
