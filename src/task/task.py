@@ -115,7 +115,7 @@ class Todo:
             self._idx = value
 
     @property
-    def deadline(self) -> date:
+    def deadline(self) -> date | None:
         """Get the task deadline.
 
         Returns:
@@ -224,3 +224,37 @@ class Todo:
         tag_ = self._normalize(tag)
         if tag_ in self.tags:
             self.tags.remove(tag_)
+
+    def clone(self) -> Todo:
+        """Create a new copy of the current Todo instance with updated timestamps.
+
+        This method performs a deep clone of the task while preserving all
+        user-defined attributes (description, priority, status, and tags).
+        The `created_at` field is refreshed to the current UTC time, while
+        the `deadline` is carried over only if it is not in the past.
+        A new unique UUID is automatically generated for the cloned task.
+
+        Returns:
+            Todo: A new `Todo` instance representing a cloned copy of the current task.
+
+        Example:
+            >>> todo = Todo(description="Write tests", tags=["python"])
+            >>> cloned = todo.clone()
+            >>> cloned is todo
+            False
+            >>> cloned.description == todo.description
+            True
+            >>> cloned.created_at > todo.created_at
+            True
+        """
+        created_at = datetime.now(tz=UTC)
+        deadline = None if self.deadline and self.deadline < created_at.date() else self.deadline
+
+        return Todo(
+            description=self.description,
+            priority=self.priority,
+            created_at=created_at,
+            deadline=deadline,
+            tags=self.tags.copy(),
+            status=self.status,
+        )
