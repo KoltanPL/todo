@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 import re
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
@@ -9,7 +9,6 @@ from src.enums.status_enum import StatusEnum
 
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Iterable
-    from datetime import date
 
 
 class Todo:
@@ -258,3 +257,54 @@ class Todo:
             tags=self.tags.copy(),
             status=self.status,
         )
+
+    def __repr__(self) -> str:
+        return (
+            f"{type(self).__name__}("
+            f"description={self.description!r}, "
+            f"priority={type(self.priority).__name__}({self.priority.value}), "
+            f"created_at={self.created_at!r}, "
+            f"deadline={self.deadline!r}, "
+            f"tags={self.tags!r}, "
+            f'status={type(self.status).__name__}("{self.status.value}"), '
+            f"idx={self.idx!r}"
+            f")"
+        )
+
+    def __str__(self) -> str:
+        priority_emoji = {
+            "HIGH": "🔴",
+            "MEDIUM": "🟡",
+            "LOW": "🟢",
+        }.get(self.priority.name.upper(), "")
+
+        tags_str = "| " + ", ".join(f"🏷️ {tag}" for tag in self.tags) if self.tags else ""
+
+        return (
+            f"{priority_emoji}  {self.description.capitalize()} | "
+            f"📅  {self.deadline if self.deadline else '-'} {tags_str}"
+        )
+
+    def __format__(self, format_spec: str) -> str:
+        format_spec = (format_spec or "str").lower().strip()
+
+        tags_str = ", ".join(f"🏷️ {tag}" for tag in self.tags) if self.tags else ""
+
+        days_left = (self.deadline - datetime.now(tz=UTC).date()).days
+        status = "✓" if self.status.value == "completed" else "✗"
+
+        if format_spec in {"s", "short"}:
+            return f"[{status}] {self.description} ({days_left if days_left > 0 else 0} days left)"
+
+        if format_spec in {"l", "long"}:
+            return (
+                f"{type(self).__name__} '{self.description}'\n"
+                f"  idx: {self.idx}\n"
+                f"  status: {self.status.value}\n"
+                f"  created_at: {self.created_at.strftime('%Y-%m-%d')}\n"
+                f"  deadline: {self.deadline}\n"
+                f"  priority: {self.priority.name.capitalize()}\n"
+                f"  tags: {tags_str}\n"
+            )
+
+        return str(self)
