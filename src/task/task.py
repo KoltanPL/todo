@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 import re
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
@@ -9,7 +9,6 @@ from src.enums.status_enum import StatusEnum
 
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Iterable
-    from datetime import date
 
 
 class Todo:
@@ -258,3 +257,108 @@ class Todo:
             tags=self.tags.copy(),
             status=self.status,
         )
+
+    def __repr__(self) -> str:
+        """Return an unambiguous, fully reconstructible string representation of the Todo object.
+
+        The returned string includes every field of the object in a format suitable
+        for recreating the instance via ``eval`` when provided with the proper namespace.
+        This representation is intended for debugging, logging and developer-facing tools.
+
+        Returns:
+            str: A detailed developer-friendly representation of the object, including:
+                - description
+                - priority (as PriorityEnum(value))
+                - created_at (as datetime repr)
+                - deadline (date repr or None)
+                - tags (repr of the list)
+                - status (StatusEnum("value"))
+                - idx (UUID repr)
+        """
+        return (
+            f"{type(self).__name__}("
+            f"description={self.description!r}, "
+            f"priority={type(self.priority).__name__}({self.priority.value}), "
+            f"created_at={self.created_at!r}, "
+            f"deadline={self.deadline!r}, "
+            f"tags={self.tags!r}, "
+            f'status={type(self.status).__name__}("{self.status.value}"), '
+            f"idx={self.idx!r}"
+            f")"
+        )
+
+    def __str__(self) -> str:
+        """Return a human-friendly, concise string representation of the Todo task.
+
+        This format is meant for displaying the task in UI, logs, CLI output, or summaries.
+        It emphasizes readability by using:
+            - priority emojis (🔴/🟡/🟢)
+            - capitalized description
+            - deadline or '-' when missing
+            - tag list prefixed with 🏷️
+
+        Returns:
+            str: A lightweight, user-friendly summary of the task.
+        """
+        priority_emoji = {
+            "HIGH": "🔴",
+            "MEDIUM": "🟡",
+            "LOW": "🟢",
+        }.get(self.priority.name.upper(), "")
+
+        tags_str = "| " + ", ".join(f"🏷️ {tag}" for tag in self.tags) if self.tags else ""
+
+        return (
+            f"{priority_emoji}  {self.description.capitalize()} | "
+            f"📅  {self.deadline if self.deadline else '-'} {tags_str}"
+        )
+
+    def __format__(self, format_spec: str) -> str:
+        """Format the Todo object according to the given format specifier.
+
+        Supported format specifiers:
+            - "s" / "short":
+                Produces a compact status line, including:
+                    * ✓ or ✗ depending on completion status
+                    * description
+                    * days left until the deadline (clamped at 0)
+            - "l" / "long":
+                Produces a multiline technical report including:
+                    * idx
+                    * status
+                    * created_at (YYYY-MM-DD)
+                    * deadline
+                    * priority
+                    * tag list
+            - Any other value (including empty):
+                Falls back to ``__str__``.
+
+        Args:
+            format_spec (str): The format key determining the output style.
+                               Case-insensitive. Empty or unknown values use ``__str__``.
+
+        Returns:
+            str: The formatted representation of the Todo task.
+        """
+        format_spec = (format_spec or "str").lower().strip()
+
+        tags_str = ", ".join(f"🏷️ {tag}" for tag in self.tags) if self.tags else ""
+
+        days_left = (self.deadline - datetime.now(tz=UTC).date()).days
+        status = "✓" if self.status.value == "completed" else "✗"
+
+        if format_spec in {"s", "short"}:
+            return f"[{status}] {self.description} ({days_left if days_left > 0 else 0} days left)"
+
+        if format_spec in {"l", "long"}:
+            return (
+                f"{type(self).__name__} '{self.description}'\n"
+                f"  idx: {self.idx}\n"
+                f"  status: {self.status.value}\n"
+                f"  created_at: {self.created_at.strftime('%Y-%m-%d')}\n"
+                f"  deadline: {self.deadline}\n"
+                f"  priority: {self.priority.name.capitalize()}\n"
+                f"  tags: {tags_str}\n"
+            )
+
+        return str(self)
