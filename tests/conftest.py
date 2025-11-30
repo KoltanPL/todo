@@ -7,6 +7,7 @@ from src.enums.priority_enum import PriorityEnum
 from src.enums.status_enum import StatusEnum
 import src.task.task as task_module
 from src.task.task import Todo
+from src.todo_list.todo_list import TodoList
 
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -35,3 +36,36 @@ def basic_todo() -> Todo:
         tags=["Python", "JavaScript", "Java"],
         status=StatusEnum.IN_PROGRESS,
     )
+
+
+@pytest.fixture
+def todo_1() -> Todo:
+    return Todo(
+        description="Learn python",
+    )
+
+
+@pytest.fixture
+def todo_2() -> Todo:
+    return Todo(
+        description="Learn js",
+    )
+
+
+@pytest.fixture
+def todo_3() -> Todo:
+    return Todo(
+        description="Learn ts",
+    )
+
+
+@pytest.fixture
+def todo_4() -> Todo:
+    return Todo(
+        description="Learn sql",
+    )
+
+
+@pytest.fixture
+def basic_todo_list(todo_1: Todo, todo_2: Todo, todo_3: Todo, todo_4: Todo) -> TodoList:
+    return TodoList([todo_1, todo_2, todo_3, todo_4])
