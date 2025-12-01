@@ -69,3 +69,57 @@ def todo_4() -> Todo:
 @pytest.fixture
 def basic_todo_list(todo_1: Todo, todo_2: Todo, todo_3: Todo, todo_4: Todo) -> TodoList:
     return TodoList([todo_1, todo_2, todo_3, todo_4])
+
+
+@pytest.fixture
+def todo_high_priority() -> Todo:
+    return Todo(
+        description="Learn FastAPI",
+        priority=PriorityEnum.HIGH,
+        status=StatusEnum.TODO,
+        tags=["urgent", "backend"],
+        deadline=(_FixedDateTime.now(tz=datetime.UTC) + datetime.timedelta(days=2)).date(),
+    )
+
+
+@pytest.fixture
+def todo_low_priority() -> Todo:
+    return Todo(
+        description="Learn MongoDB",
+        priority=PriorityEnum.LOW,
+        status=StatusEnum.IN_PROGRESS,
+        tags=["backend", "data"],
+        deadline=(_FixedDateTime.now(tz=datetime.UTC) + datetime.timedelta(days=30)).date(),
+    )
+
+
+@pytest.fixture
+def todo_completed() -> Todo:
+    return Todo(
+        description="Learn Java",
+        priority=PriorityEnum.MEDIUM,
+        status=StatusEnum.COMPLETED,
+        tags=["backend"],
+        deadline=(_FixedDateTime.now(tz=datetime.UTC) + datetime.timedelta(days=15)).date(),
+    )
+
+
+@pytest.fixture
+def todo_no_deadline() -> Todo:
+    return Todo(
+        description="Task without deadline",
+        priority=PriorityEnum.MEDIUM,
+        status=StatusEnum.TODO,
+        tags=["documentation"],
+        deadline=None,
+    )
+
+
+@pytest.fixture
+def mixed_todo_list(
+    todo_high_priority: Todo,
+    todo_low_priority: Todo,
+    todo_completed: Todo,
+    todo_no_deadline: Todo,
+) -> TodoList:
+    return TodoList([todo_high_priority, todo_low_priority, todo_completed, todo_no_deadline])
