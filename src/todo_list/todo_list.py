@@ -3,9 +3,12 @@ from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:  # pragma: no cover
-    from collections.abc import Iterable
+    from collections.abc import Callable, Iterable
+    from datetime import date
     from uuid import UUID
 
+    from src.enums.priority_enum import PriorityEnum
+    from src.enums.status_enum import StatusEnum
     from src.task.task import Todo
 
 
@@ -143,3 +146,48 @@ class TodoList:
                 return task
 
         raise ValueError(f"Task with idx: {idx} not found.")
+
+    def filter_by(
+        self,
+        *,
+        priority: PriorityEnum | None = None,
+        status: StatusEnum | None = None,
+        tag: str | None = None,
+        deadline_before: date | None = None,
+        deadline_after: date | None = None,
+        custom_filter: Callable[[Todo], bool] | None = None,
+    ) -> TodoList:
+        """Filter tasks using multiple criteria.
+
+        Args:
+            priority: Required priority.
+            status: Required status.
+            tag: Required tag membership.
+            deadline_before: Maximum acceptable deadline (inclusive).
+            deadline_after: Minimum acceptable deadline (inclusive).
+            custom_filter: Additional predicate applied to each task.
+
+        Returns:
+            TaskList: New TaskList containing only tasks satisfying all criteria.
+        """
+
+        def matches(t: Todo) -> bool:
+            priority_ok = priority is None or t.priority == priority
+            status_ok = status is None or t.status == status
+            tag_ok = tag is None or tag in t.tags
+
+            deadline_before_ok = deadline_before is None or (t.deadline is not None and t.deadline <= deadline_before)
+            deadline_after_ok = deadline_after is None or (t.deadline is not None and t.deadline >= deadline_after)
+
+            custom_ok = custom_filter is None or custom_filter(t)
+
+            return all((
+                priority_ok,
+                status_ok,
+                tag_ok,
+                deadline_before_ok,
+                deadline_after_ok,
+                custom_ok,
+            ))
+
+        return TodoList([task for task in self.tasks if matches(task)])
