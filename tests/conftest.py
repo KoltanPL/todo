@@ -100,7 +100,7 @@ def todo_completed() -> Todo:
         priority=PriorityEnum.MEDIUM,
         status=StatusEnum.COMPLETED,
         tags=["backend"],
-        deadline=(_FixedDateTime.now(tz=datetime.UTC) - datetime.timedelta(days=30)).date(),
+        deadline=(_FixedDateTime.now(tz=datetime.UTC) - datetime.timedelta(days=0)).date(),
     )
 
 
