@@ -1,8 +1,9 @@
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, timedelta
 from typing import TYPE_CHECKING
 
 from src.enums.priority_enum import PriorityEnum
 from src.enums.status_enum import StatusEnum
+from tests.conftest import _FixedDateTime
 
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -37,17 +38,51 @@ def test_filter_by_deadline_before(
     todo_high_priority: Todo,
     todo_completed: Todo,
 ) -> None:
-    cutoff_date = (datetime.now(tz=UTC) + timedelta(days=10)).date()
-    result = mixed_todo_list.filter_by(deadline_before=cutoff_date)
+    cutoff_date = (_FixedDateTime.now(tz=UTC) + timedelta(days=16)).date()
+    res = mixed_todo_list.filter_by(deadline_before=cutoff_date)
 
-    assert len(result.tasks) == 2
-    assert todo_high_priority in result.tasks
-    assert todo_completed in result.tasks
+    assert len(res.tasks) == 2
+    assert todo_high_priority in res.tasks
+    assert todo_completed in res.tasks
 
 
 def test_filter_by_deadline_after(mixed_todo_list: TodoList, todo_low_priority: Todo) -> None:
-    cutoff_date = (datetime.now(tz=UTC) + timedelta(days=20)).date()
-    result = mixed_todo_list.filter_by(deadline_after=cutoff_date)
+    cutoff_date = (_FixedDateTime.now(tz=UTC) + timedelta(days=20)).date()
+    res = mixed_todo_list.filter_by(deadline_after=cutoff_date)
 
-    assert len(result.tasks) == 1
-    assert result.tasks[0] is todo_low_priority
+    assert len(res.tasks) == 1
+    assert res.tasks[0] is todo_low_priority
+
+
+def test_filter_by_multiple_criteria(mixed_todo_list: TodoList, todo_high_priority: Todo) -> None:
+    res = mixed_todo_list.filter_by(
+        priority=PriorityEnum.HIGH,
+        status=StatusEnum.TODO,
+        tag="urgent",
+        deadline_before=(_FixedDateTime.now(tz=UTC) + timedelta(days=365)).date(),
+    )
+
+    assert len(res.tasks) == 1
+    assert res.tasks[0] is todo_high_priority
+
+
+def test_filter_by_no_criteria(mixed_todo_list: TodoList) -> None:
+    res = mixed_todo_list.filter_by()
+
+    assert len(res.tasks) == 4
+
+
+def test_filter_by_no_matches(mixed_todo_list: TodoList) -> None:
+    res = mixed_todo_list.filter_by(priority=PriorityEnum.HIGH, status=StatusEnum.COMPLETED)
+
+    assert len(res.tasks) == 0
+
+
+def test_filter_by_task_without_deadline_excluded(
+    mixed_todo_list: TodoList,
+    todo_no_deadline: Todo,
+) -> None:
+    cutoff_date = (_FixedDateTime.now(tz=UTC) + timedelta(days=100)).date()
+    res = mixed_todo_list.filter_by(deadline_before=cutoff_date)
+
+    assert todo_no_deadline not in res.tasks
