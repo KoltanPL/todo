@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:  # pragma: no cover
-    from collections.abc import Callable, Iterable
+    from collections.abc import Callable, Iterable, Iterator
     from datetime import date
     from uuid import UUID
 
@@ -191,3 +191,15 @@ class TodoList:
             ))
 
         return TodoList([task for task in self.tasks if matches(task)])
+
+    def __len__(self) -> int:
+        return len(self._tasks)
+
+    def __iter__(self) -> Iterator[Todo]:
+        return iter(self._tasks)
+
+    def __contains__(self, idx: UUID) -> bool:
+        return any(task.idx == idx for task in self.tasks)
+
+    def __getitem__(self, index: int) -> Todo:
+        return self.tasks[index]
