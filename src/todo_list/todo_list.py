@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -191,6 +191,12 @@ class TodoList:
             ))
 
         return TodoList([task for task in self.tasks if matches(task)])
+
+    def sort_by(self, *, key: Callable[[Todo], Any], reverse: bool = False) -> TodoList:
+        return TodoList(sorted(self.tasks, key=key, reverse=reverse))
+
+    def sort_by_many(self, *keys: Callable[[Todo], Any], reverse: bool = False) -> TodoList:
+        return TodoList(sorted(self.tasks, key=lambda t: tuple(k(t) for k in keys), reverse=reverse))
 
     def __len__(self) -> int:
         return len(self._tasks)
