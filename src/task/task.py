@@ -271,6 +271,22 @@ class Todo:
             "idx": str(self.idx),
         }
 
+    @classmethod
+    def from_dict(cls, data: TodoDict) -> Todo:
+        created_at_dt: datetime = datetime.fromisoformat(data["created_at"])
+
+        deadline_d: date | None = None if data["deadline"] is None else date.fromisoformat(data["deadline"])
+
+        return cls(
+            description=data["description"],
+            priority=PriorityEnum(data["priority"]),
+            created_at=created_at_dt,
+            deadline=deadline_d,
+            tags=data["tags"],
+            status=StatusEnum(data["status"]),
+            idx=data["idx"],
+        )
+
     def __repr__(self) -> str:
         """Return an unambiguous, fully reconstructible string representation of the Todo object.
 
