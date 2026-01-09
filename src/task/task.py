@@ -10,6 +10,8 @@ from src.enums.status_enum import StatusEnum
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Iterable
 
+    from src.schemas.todo_schema import TodoDict
+
 
 class Todo:
     """Represents a single to-do item with metadata such as description, priority, status, and deadlines.
@@ -257,6 +259,17 @@ class Todo:
             tags=self.tags.copy(),
             status=self.status,
         )
+
+    def to_dict(self) -> TodoDict:
+        return {
+            "description": self.description,
+            "priority": self.priority.value,
+            "created_at": self.created_at.isoformat(),
+            "deadline": self.deadline.isoformat() if self.deadline else None,
+            "tags": self.tags,
+            "status": self.status,
+            "idx": str(self.idx),
+        }
 
     def __repr__(self) -> str:
         """Return an unambiguous, fully reconstructible string representation of the Todo object.
