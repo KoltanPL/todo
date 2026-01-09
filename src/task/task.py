@@ -1,6 +1,7 @@
 from datetime import UTC, date, datetime
+import json
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 from uuid import UUID, uuid4
 
 from src.enums.priority_enum import PriorityEnum
@@ -286,6 +287,18 @@ class Todo:
             status=StatusEnum(data["status"]),
             idx=data["idx"],
         )
+
+    def to_json(self, *, indent: int | None = None) -> str:
+        return json.dumps(self.to_dict(), ensure_ascii=False, indent=indent)
+
+    @classmethod
+    def from_json(cls, raw: str) -> Todo:
+        payload: Any = json.loads(raw)
+
+        if not isinstance(payload, dict):
+            raise TypeError("Todo JSON must represent an object.")
+        data = cast("TodoDict", payload)
+        return cls.from_dict(data)
 
     def __repr__(self) -> str:
         """Return an unambiguous, fully reconstructible string representation of the Todo object.
