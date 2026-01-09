@@ -26,7 +26,7 @@ def test_filter_by_status(mixed_todo_list: TodoList, todo_completed: Todo) -> No
 
 
 def test_filter_by_tag(mixed_todo_list: TodoList, todo_high_priority: Todo, todo_low_priority: Todo) -> None:
-    res = mixed_todo_list.filter_by(tag="backend")
+    res = mixed_todo_list.filter_by(tag='backend')
 
     assert len(res.tasks) == 3
     assert todo_high_priority in res.tasks
@@ -58,7 +58,7 @@ def test_filter_by_multiple_criteria(mixed_todo_list: TodoList, todo_high_priori
     res = mixed_todo_list.filter_by(
         priority=PriorityEnum.HIGH,
         status=StatusEnum.TODO,
-        tag="urgent",
+        tag='urgent',
         deadline_before=(_FixedDateTime.now(tz=UTC) + timedelta(days=365)).date(),
     )
 
@@ -89,6 +89,6 @@ def test_filter_by_task_without_deadline_excluded(
 
 
 def test_filter_by_custom_function(mixed_todo_list: TodoList) -> None:
-    res = mixed_todo_list.filter_by(custom_filter=lambda todo: "learn" in todo.description.lower())
+    res = mixed_todo_list.filter_by(custom_filter=lambda todo: 'learn' in todo.description.lower())
 
     assert len(res.tasks) == 3

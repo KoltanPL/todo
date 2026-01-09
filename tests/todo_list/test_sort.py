@@ -34,8 +34,8 @@ def test_sort_by_deadline_none_last(todo_high_priority: Todo, todo_low_priority:
 
 
 def test_sort_by_stable() -> None:
-    t1 = Todo(description="Python")
-    t2 = Todo(description="Java")
+    t1 = Todo(description='Python')
+    t2 = Todo(description='Java')
 
     my_todo_list = TodoList([t1, t2])
 
@@ -74,9 +74,9 @@ def test_sort_by_many_created_at_then_priority_descending() -> None:
     dt1 = datetime(2025, 12, 11, 21, 30, 0, tzinfo=UTC)
     dt2 = datetime(2026, 1, 11, 21, 30, 0, tzinfo=UTC)
 
-    t1 = Todo(description="Python", priority=PriorityEnum.MEDIUM, created_at=dt1)
+    t1 = Todo(description='Python', priority=PriorityEnum.MEDIUM, created_at=dt1)
 
-    t2 = Todo(description="Python", priority=PriorityEnum.LOW, created_at=dt2)
+    t2 = Todo(description='Python', priority=PriorityEnum.LOW, created_at=dt2)
 
     ml = TodoList([t1, t2])
 

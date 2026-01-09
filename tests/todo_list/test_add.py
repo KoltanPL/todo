@@ -16,5 +16,5 @@ def test_add_adds_task_to_list(basic_todo_list: TodoList, basic_todo: Todo) -> N
 
 
 def test_add_raises_on_duplicate_idx(basic_todo_list: TodoList, todo_1: Todo) -> None:
-    with pytest.raises(ValueError, match=r"Duplicate Todo index values detected"):
+    with pytest.raises(ValueError, match=r'Duplicate Todo index values detected'):
         basic_todo_list.add(todo_1)

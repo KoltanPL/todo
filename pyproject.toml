@@ -47,6 +47,8 @@ omit = [
   "*/alembic/*",
   "*/migrations/*",
   "*/.venv/*",
+  "**/todo_schema.py",
+  "**/todolist_schema.py",
 ]
 
 [tool.coverage.report]
