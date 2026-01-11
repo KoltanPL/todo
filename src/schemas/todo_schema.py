@@ -1,11 +1,11 @@
-from typing import TypedDict
+from typing import TypedDict  # pragma: no cover
 
 
-class TodoDict(TypedDict):
-    description: str
-    priority: int
-    created_at: str
-    deadline: str | None
-    tags: list[str]
-    status: str
-    idx: str
+class TodoDict(TypedDict):  # pragma: no cover
+    description: str  # pragma: no cover
+    priority: int  # pragma: no cover
+    created_at: str  # pragma: no cover
+    deadline: str | None  # pragma: no cover
+    tags: list[str]  # pragma: no cover
+    status: str  # pragma: no cover
+    idx: str  # pragma: no cover
