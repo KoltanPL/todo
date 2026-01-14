@@ -1,5 +1,6 @@
 from collections import Counter
-from typing import TYPE_CHECKING, Any
+import json
+from typing import TYPE_CHECKING, Any, cast
 
 from src.task.task import Todo
 
@@ -101,7 +102,7 @@ class TodoList:
         duplicates = [idx for idx, count in counter.items() if count > 1]
 
         if duplicates:
-            raise ValueError(f"Duplicate Todo index values detected: {', '.join(duplicates)}.")
+            raise ValueError(f'Duplicate Todo index values detected: {", ".join(duplicates)}.')
 
     def add(self, task: Todo) -> None:
         """Add a new task to the list.
@@ -129,7 +130,7 @@ class TodoList:
         self.tasks = [task for task in self.tasks if task.idx != idx]
 
         if len(self.tasks) == tasks_len:
-            raise ValueError(f"Task with idx: {idx} not found.")
+            raise ValueError(f'Task with idx: {idx} not found.')
 
     def get(self, idx: UUID) -> Todo:
         """Retrieve a task by its UUID.
@@ -147,7 +148,7 @@ class TodoList:
             if task.idx == idx:
                 return task
 
-        raise ValueError(f"Task with idx: {idx} not found.")
+        raise ValueError(f'Task with idx: {idx} not found.')
 
     def filter_by(
         self,
@@ -201,11 +202,23 @@ class TodoList:
         return TodoList(sorted(self.tasks, key=lambda t: tuple(k(t) for k in keys), reverse=reverse))
 
     def to_dict(self) -> TodoListDict:
-        return {"tasks": [task.to_dict() for task in self.tasks]}
+        return {'tasks': [task.to_dict() for task in self]}
 
     @classmethod
     def from_dict(cls, data: TodoListDict) -> TodoList:
-        return cls(tasks=[Todo.from_dict(todo) for todo in data["tasks"]])
+        return cls(tasks=[Todo.from_dict(todo) for todo in data['tasks']])
+
+    def to_json(self, *, indent: int | None = None) -> str:
+        return json.dumps(self.to_dict(), ensure_ascii=False, indent=indent)
+
+    @classmethod
+    def from_json(cls, raw: str) -> TodoList:
+        payload: Any = json.loads(raw)
+
+        if not isinstance(payload, dict):
+            raise TypeError('TodoList JSON must represent an object.')
+        data = cast('TodoListDict', payload)
+        return cls.from_dict(data)
 
     def __len__(self) -> int:
         return len(self._tasks)

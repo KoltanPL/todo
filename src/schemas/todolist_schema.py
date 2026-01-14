@@ -1,9 +1,9 @@
-from typing import TYPE_CHECKING, TypedDict  # pragma: no cover
+from typing import TYPE_CHECKING, TypedDict
 
 
-if TYPE_CHECKING:  # pragma: no cover
-    from src.schemas.todo_schema import TodoDict  # pragma: no cover
+if TYPE_CHECKING:
+    from src.schemas.todo_schema import TodoDict
 
 
-class TodoListDict(TypedDict):  # pragma: no cover
+class TodoListDict(TypedDict):
     tasks: list[TodoDict]

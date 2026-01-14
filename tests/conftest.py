@@ -24,16 +24,16 @@ class _FixedDateTime(datetime.datetime):
 
 @pytest.fixture(autouse=True)
 def _freeze_datetime(monkeypatch: MonkeyPatch) -> None:
-    monkeypatch.setattr(task_module, "datetime", _FixedDateTime)
+    monkeypatch.setattr(task_module, 'datetime', _FixedDateTime)
 
 
 @pytest.fixture
 def basic_todo() -> Todo:
     return Todo(
-        description="Write tests",
+        description='Write tests',
         priority=PriorityEnum.LOW,
         deadline=(_FixedDateTime.now(tz=datetime.UTC) + datetime.timedelta(days=10)).date(),
-        tags=["Python", "JavaScript", "Java"],
+        tags=['Python', 'JavaScript', 'Java'],
         status=StatusEnum.IN_PROGRESS,
     )
 
@@ -41,28 +41,28 @@ def basic_todo() -> Todo:
 @pytest.fixture
 def todo_1() -> Todo:
     return Todo(
-        description="Learn python",
+        description='Learn python',
     )
 
 
 @pytest.fixture
 def todo_2() -> Todo:
     return Todo(
-        description="Learn js",
+        description='Learn js',
     )
 
 
 @pytest.fixture
 def todo_3() -> Todo:
     return Todo(
-        description="Learn ts",
+        description='Learn ts',
     )
 
 
 @pytest.fixture
 def todo_4() -> Todo:
     return Todo(
-        description="Learn sql",
+        description='Learn sql',
     )
 
 
@@ -74,21 +74,22 @@ def basic_todo_list(todo_1: Todo, todo_2: Todo, todo_3: Todo, todo_4: Todo) -> T
 @pytest.fixture
 def todo_high_priority() -> Todo:
     return Todo(
-        description="Learn FastAPI",
+        description='Learn FastAPI',
         priority=PriorityEnum.HIGH,
         status=StatusEnum.TODO,
-        tags=["urgent", "backend"],
+        tags=['urgent', 'backend'],
         deadline=(_FixedDateTime.now(tz=datetime.UTC) + datetime.timedelta(days=2)).date(),
+        idx='7f4deca0-44b7-413a-80d7-550fedb1dc6a',
     )
 
 
 @pytest.fixture
 def todo_low_priority() -> Todo:
     return Todo(
-        description="Learn MongoDB",
+        description='Learn MongoDB',
         priority=PriorityEnum.LOW,
         status=StatusEnum.IN_PROGRESS,
-        tags=["backend", "data"],
+        tags=['backend', 'data'],
         deadline=(_FixedDateTime.now(tz=datetime.UTC) + datetime.timedelta(days=30)).date(),
     )
 
@@ -96,10 +97,10 @@ def todo_low_priority() -> Todo:
 @pytest.fixture
 def todo_completed() -> Todo:
     return Todo(
-        description="Learn Java",
+        description='Learn Java',
         priority=PriorityEnum.MEDIUM,
         status=StatusEnum.COMPLETED,
-        tags=["backend"],
+        tags=['backend'],
         deadline=(_FixedDateTime.now(tz=datetime.UTC) + datetime.timedelta(days=15)).date(),
     )
 
@@ -107,10 +108,10 @@ def todo_completed() -> Todo:
 @pytest.fixture
 def todo_no_deadline() -> Todo:
     return Todo(
-        description="Task without deadline",
+        description='Task without deadline',
         priority=PriorityEnum.MEDIUM,
         status=StatusEnum.TODO,
-        tags=["documentation"],
+        tags=['documentation'],
         deadline=None,
     )
 

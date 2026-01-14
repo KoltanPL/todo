@@ -13,5 +13,5 @@ def test_get_task_idx_exists(basic_todo_list: TodoList, todo_1: Todo) -> None:
 
 
 def test_remove_task_idx_not_in_tasks(basic_todo_list: TodoList, basic_todo: Todo) -> None:
-    with pytest.raises(ValueError, match=rf"Task with idx: {basic_todo.idx} not found."):
+    with pytest.raises(ValueError, match=rf'Task with idx: {basic_todo.idx} not found.'):
         basic_todo_list.get(basic_todo.idx)

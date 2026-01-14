@@ -68,7 +68,7 @@ classmethod-decorators = ["classmethod", "validator", "field_validator"]
 # Formatter (Ruff-format)
 # ========================================
 [format]
-quote-style = "double"
+quote-style = "single"
 indent-style = "space"
 line-ending = "lf"
 skip-magic-trailing-comma = false

@@ -87,7 +87,7 @@ class Todo:
             ValueError: If the description is shorter than 3 characters.
         """
         if len(value.strip()) < 3:
-            raise ValueError(f"Description {value} must be at least 3 characters.")
+            raise ValueError(f'Description {value} must be at least 3 characters.')
         self._description = value.strip()
 
     @property
@@ -140,7 +140,7 @@ class Todo:
         if value is None:
             self._deadline = None
         elif value < self.created_at.date():
-            raise ValueError(f"Deadline {value} is invalid, date should be from the future.")
+            raise ValueError(f'Deadline {value} is invalid, date should be from the future.')
         self._deadline = value
 
     @property
@@ -181,7 +181,7 @@ class Todo:
         Returns:
             A normalized lowercase string with single spaces.
         """
-        return re.sub(r"\s{2,}", " ", text).lower().strip()
+        return re.sub(r'\s{2,}', ' ', text).lower().strip()
 
     @staticmethod
     def _unique_values(values: Iterable[str]) -> list[str]:
@@ -240,7 +240,7 @@ class Todo:
             Todo: A new `Todo` instance representing a cloned copy of the current task.
 
         Example:
-            >>> todo = Todo(description="Write tests", tags=["python"])
+            >>> todo = Todo(description='Write tests', tags=['python'])
             >>> cloned = todo.clone()
             >>> cloned is todo
             False
@@ -263,29 +263,29 @@ class Todo:
 
     def to_dict(self) -> TodoDict:
         return {
-            "description": self.description,
-            "priority": self.priority.value,
-            "created_at": self.created_at.isoformat(),
-            "deadline": self.deadline.isoformat() if self.deadline else None,
-            "tags": self.tags,
-            "status": self.status,
-            "idx": str(self.idx),
+            'description': self.description,
+            'priority': self.priority.value,
+            'created_at': self.created_at.isoformat(),
+            'deadline': self.deadline.isoformat() if self.deadline else None,
+            'tags': self.tags,
+            'status': self.status.value,
+            'idx': str(self.idx),
         }
 
     @classmethod
     def from_dict(cls, data: TodoDict) -> Todo:
-        created_at_dt: datetime = datetime.fromisoformat(data["created_at"])
+        created_at_dt: datetime = datetime.fromisoformat(data['created_at'])
 
-        deadline_d: date | None = None if data["deadline"] is None else date.fromisoformat(data["deadline"])
+        deadline_d: date | None = None if data['deadline'] is None else date.fromisoformat(data['deadline'])
 
         return cls(
-            description=data["description"],
-            priority=PriorityEnum(data["priority"]),
+            description=data['description'],
+            priority=PriorityEnum(data['priority']),
             created_at=created_at_dt,
             deadline=deadline_d,
-            tags=data["tags"],
-            status=StatusEnum(data["status"]),
-            idx=data["idx"],
+            tags=data['tags'],
+            status=StatusEnum(data['status']),
+            idx=data['idx'],
         )
 
     def to_json(self, *, indent: int | None = None) -> str:
@@ -296,8 +296,8 @@ class Todo:
         payload: Any = json.loads(raw)
 
         if not isinstance(payload, dict):
-            raise TypeError("Todo JSON must represent an object.")
-        data = cast("TodoDict", payload)
+            raise TypeError('Todo JSON must represent an object.')
+        data = cast('TodoDict', payload)
         return cls.from_dict(data)
 
     def __repr__(self) -> str:
@@ -318,15 +318,15 @@ class Todo:
                 - idx (UUID repr)
         """
         return (
-            f"{type(self).__name__}("
-            f"description={self.description!r}, "
-            f"priority={type(self.priority).__name__}({self.priority.value}), "
-            f"created_at={self.created_at!r}, "
-            f"deadline={self.deadline!r}, "
-            f"tags={self.tags!r}, "
+            f'{type(self).__name__}('
+            f'description={self.description!r}, '
+            f'priority={type(self.priority).__name__}({self.priority.value}), '
+            f'created_at={self.created_at!r}, '
+            f'deadline={self.deadline!r}, '
+            f'tags={self.tags!r}, '
             f'status={type(self.status).__name__}("{self.status.value}"), '
-            f"idx={self.idx!r}"
-            f")"
+            f'idx={self.idx!r}'
+            f')'
         )
 
     def __str__(self) -> str:
@@ -343,16 +343,16 @@ class Todo:
             str: A lightweight, user-friendly summary of the task.
         """
         priority_emoji = {
-            "HIGH": "🔴",
-            "MEDIUM": "🟡",
-            "LOW": "🟢",
-        }.get(self.priority.name.upper(), "")
+            'HIGH': '🔴',
+            'MEDIUM': '🟡',
+            'LOW': '🟢',
+        }.get(self.priority.name.upper(), '')
 
-        tags_str = "| " + ", ".join(f"🏷️ {tag}" for tag in self.tags) if self.tags else ""
+        tags_str = '| ' + ', '.join(f'🏷️ {tag}' for tag in self.tags) if self.tags else ''
 
         return (
-            f"{priority_emoji}  {self.description.capitalize()} | "
-            f"📅  {self.deadline if self.deadline else '-'} {tags_str}"
+            f'{priority_emoji}  {self.description.capitalize()} | '
+            f'📅  {self.deadline if self.deadline else "-"} {tags_str}'
         )
 
     def __format__(self, format_spec: str) -> str:
@@ -382,25 +382,25 @@ class Todo:
         Returns:
             str: The formatted representation of the Todo task.
         """
-        format_spec = (format_spec or "str").lower().strip()
+        format_spec = (format_spec or 'str').lower().strip()
 
-        tags_str = ", ".join(f"🏷️ {tag}" for tag in self.tags) if self.tags else ""
+        tags_str = ', '.join(f'🏷️ {tag}' for tag in self.tags) if self.tags else ''
 
         days_left = (self.deadline - datetime.now(tz=UTC).date()).days
-        status = "✓" if self.status.value == "completed" else "✗"
+        status = '✓' if self.status.value == 'completed' else '✗'
 
-        if format_spec in {"s", "short"}:
-            return f"[{status}] {self.description} ({days_left if days_left > 0 else 0} days left)"
+        if format_spec in {'s', 'short'}:
+            return f'[{status}] {self.description} ({days_left if days_left > 0 else 0} days left)'
 
-        if format_spec in {"l", "long"}:
+        if format_spec in {'l', 'long'}:
             return (
                 f"{type(self).__name__} '{self.description}'\n"
-                f"  idx: {self.idx}\n"
-                f"  status: {self.status.value}\n"
-                f"  created_at: {self.created_at.strftime('%Y-%m-%d')}\n"
-                f"  deadline: {self.deadline}\n"
-                f"  priority: {self.priority.name.capitalize()}\n"
-                f"  tags: {tags_str}\n"
+                f'  idx: {self.idx}\n'
+                f'  status: {self.status.value}\n'
+                f'  created_at: {self.created_at.strftime("%Y-%m-%d")}\n'
+                f'  deadline: {self.deadline}\n'
+                f'  priority: {self.priority.name.capitalize()}\n'
+                f'  tags: {tags_str}\n'
             )
 
         return str(self)
