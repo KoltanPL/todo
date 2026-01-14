@@ -1,6 +1,8 @@
 from collections import Counter
 from typing import TYPE_CHECKING, Any
 
+from src.task.task import Todo
+
 
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Callable, Iterable, Iterator
@@ -9,7 +11,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from src.enums.priority_enum import PriorityEnum
     from src.enums.status_enum import StatusEnum
-    from src.task.task import Todo
+    from src.schemas.todolist_schema import TodoListDict
 
 
 class TodoList:
@@ -197,6 +199,13 @@ class TodoList:
 
     def sort_by_many(self, *keys: Callable[[Todo], Any], reverse: bool = False) -> TodoList:
         return TodoList(sorted(self.tasks, key=lambda t: tuple(k(t) for k in keys), reverse=reverse))
+
+    def to_dict(self) -> TodoListDict:
+        return {"tasks": [task.to_dict() for task in self.tasks]}
+
+    @classmethod
+    def from_dict(cls, data: TodoListDict) -> TodoList:
+        return cls(tasks=[Todo.from_dict(todo) for todo in data["tasks"]])
 
     def __len__(self) -> int:
         return len(self._tasks)
