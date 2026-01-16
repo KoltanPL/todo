@@ -78,7 +78,7 @@ def test_from_json_with_invalid_json() -> None:
 def test_from_json_with_json_array() -> None:
     json_array = '[{"x": 42}]'
 
-    with pytest.raises(TypeError, match=r'Todo JSON must represent an object.'):
+    with pytest.raises(TypeError, match=r'Invalid Todo JSON structure.'):
         Todo.from_json(json_array)
 
 
@@ -87,7 +87,7 @@ def test_from_json_with_missing_fields() -> None:
         'description': 'Test',
     })
 
-    with pytest.raises(KeyError):
+    with pytest.raises(TypeError, match=r'Invalid Todo JSON structure.'):
         Todo.from_json(incomplete_json)
 
 

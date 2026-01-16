@@ -1,7 +1,8 @@
 from collections import Counter
 import json
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
+from src.schemas.guards.todo_list_dict_guard import is_todolist_dict
 from src.task.task import Todo
 
 
@@ -215,10 +216,10 @@ class TodoList:
     def from_json(cls, raw: str) -> TodoList:
         payload: Any = json.loads(raw)
 
-        if not isinstance(payload, dict):
-            raise TypeError('TodoList JSON must represent an object.')
-        data = cast('TodoListDict', payload)
-        return cls.from_dict(data)
+        if not is_todolist_dict(payload):
+            raise TypeError('Invalid TodoList JSON structure.')
+
+        return cls.from_dict(payload)
 
     def __len__(self) -> int:
         return len(self._tasks)

@@ -1,11 +1,12 @@
 from datetime import UTC, date, datetime
 import json
 import re
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 from uuid import UUID, uuid4
 
 from src.enums.priority_enum import PriorityEnum
 from src.enums.status_enum import StatusEnum
+from src.schemas.guards.todo_dict_guard import is_todo_dict
 
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -295,10 +296,10 @@ class Todo:
     def from_json(cls, raw: str) -> Todo:
         payload: Any = json.loads(raw)
 
-        if not isinstance(payload, dict):
-            raise TypeError('Todo JSON must represent an object.')
-        data = cast('TodoDict', payload)
-        return cls.from_dict(data)
+        if not is_todo_dict(payload):
+            raise TypeError('Invalid Todo JSON structure.')
+
+        return cls.from_dict(payload)
 
     def __repr__(self) -> str:
         """Return an unambiguous, fully reconstructible string representation of the Todo object.
