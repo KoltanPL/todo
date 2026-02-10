@@ -1,6 +1,7 @@
 from datetime import date
 
 import typer
+from rich import box
 from rich.console import Console
 from rich.table import Table
 
@@ -36,7 +37,7 @@ def list_tasks():
         console.print('[yellow]No tasks found.[/yellow]')
         return
 
-    table = Table(title='Todo List', show_header=True, header_style='bold magenta')
+    table = Table(title='Todo List', show_header=True, header_style='bold magenta', box=box.SIMPLE)
     table.add_column('Status', justify='center')
     table.add_column('Priority', justify='center', width=8)
     table.add_column('Description', style='cyan')
