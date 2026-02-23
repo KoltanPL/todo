@@ -14,10 +14,7 @@ from src.enums.status_enum import StatusEnum
 from src.task.task import Todo
 from src.todo_list.todo_list import TodoList
 
-app = typer.Typer(
-    name='todo-app',
-    help='A professional Todo CLI application'
-)
+app = typer.Typer(name='todo-app', help='A professional Todo CLI application')
 
 console = Console()
 
@@ -25,15 +22,13 @@ raw_tasks = [
     Todo('Improving Python', deadline=date(2027, 1, 2)),
     Todo('Learning Java', priority=PriorityEnum.HIGH),
     Todo('Clustering models'),
-    Todo('SQL practice', tags=['SQL', 'Select', 'From'])
+    Todo('SQL practice', tags=['SQL', 'Select', 'From']),
 ]
 tasks_list = TodoList(raw_tasks)
 
 
 @app.command()
-def add_task(
-        description: str = typer.Argument(..., help='Task description')
-):
+def add_task(description: str = typer.Argument(..., help='Task description')):
     task = Todo(description=description)
 
     tasks_list.add(task)
@@ -56,15 +51,15 @@ def list_tasks():
     table.add_column('Tags', style='blue')
 
     priority_colors = {
-        PriorityEnum.HIGH: "red",
-        PriorityEnum.MEDIUM: "yellow",
-        PriorityEnum.LOW: "green",
+        PriorityEnum.HIGH: 'red',
+        PriorityEnum.MEDIUM: 'yellow',
+        PriorityEnum.LOW: 'green',
     }
 
     for idx, task in enumerate(tasks_list, 1):
         status_icon = task.status.value
-        priority_color = priority_colors.get(task.priority, "white")
-        priority_text = f"[{priority_color}]{task.priority.name}[/{priority_color}]"
+        priority_color = priority_colors.get(task.priority, 'white')
+        priority_text = f'[{priority_color}]{task.priority.name}[/{priority_color}]'
 
         tags = ', '.join(task.tags) if task.tags else '-'
 
@@ -75,7 +70,6 @@ def list_tasks():
             task.description,
             str(task.deadline),
             tags,
-
         )
 
     console.print(table)
@@ -83,12 +77,12 @@ def list_tasks():
 
 def prompt_deadline_graphical() -> date | None:
     options = [
-        "No deadline",
-        "Today",
-        "Tomorrow",
-        "In 7 days",
-        "In 14 days",
-        "Pick exact date (YYYY-MM-DD)",
+        'No deadline',
+        'Today',
+        'Tomorrow',
+        'In 7 days',
+        'In 14 days',
+        'Pick exact date (YYYY-MM-DD)',
     ]
     idx = TerminalMenu(options).show()
     if idx is None:
@@ -105,7 +99,7 @@ def prompt_deadline_graphical() -> date | None:
     if idx == 4:
         return date.today() + timedelta(days=14)
     while True:
-        raw = typer.prompt("Deadline (YYYY-MM-DD)").strip()
+        raw = typer.prompt('Deadline (YYYY-MM-DD)').strip()
 
         try:
             user_deadline = date.fromisoformat(raw)
@@ -114,7 +108,7 @@ def prompt_deadline_graphical() -> date | None:
             else:
                 typer.echo('Date should be in the future.')
         except ValueError:
-            typer.echo("Invalid date. Example: 2026-03-01")
+            typer.echo('Invalid date. Example: 2026-03-01')
 
 
 def handle_add():
@@ -148,28 +142,21 @@ def handle_add():
 def print_task_summary(task: Todo, highlight_field: str | None = None) -> None:
     console.print()
 
-    table = Table(
-        title="Current Task",
-        box=box.ROUNDED,
-        show_header=False
-    )
+    table = Table(title='Current Task', box=box.ROUNDED, show_header=False)
 
-    table.add_column("Field", style="bold cyan")
-    table.add_column("Value")
+    table.add_column('Field', style='bold cyan')
+    table.add_column('Value')
 
     def style(field_name: str, value: str) -> str:
         if highlight_field == field_name:
-            return f"[bold green]{value}[/bold green]"
+            return f'[bold green]{value}[/bold green]'
         return value
 
-    table.add_row("Status", style("status", task.status.value))
-    table.add_row("Priority", style("priority", task.priority.name))
-    table.add_row("Description", style("description", task.description))
-    table.add_row("Deadline", style("deadline", str(task.deadline)))
-    table.add_row(
-        "Tags",
-        style("tags", ", ".join(task.tags) if task.tags else "-")
-    )
+    table.add_row('Status', style('status', task.status.value))
+    table.add_row('Priority', style('priority', task.priority.name))
+    table.add_row('Description', style('description', task.description))
+    table.add_row('Deadline', style('deadline', str(task.deadline)))
+    table.add_row('Tags', style('tags', ', '.join(task.tags) if task.tags else '-'))
 
     console.print(table)
 
@@ -213,16 +200,16 @@ def handle_update() -> None:
             handler(task)
 
             field_map = {
-                UpdateFieldAction.STATUS: "status",
-                UpdateFieldAction.PRIORITY: "priority",
-                UpdateFieldAction.DESCRIPTION: "description",
-                UpdateFieldAction.DEADLINE: "deadline",
-                UpdateFieldAction.TAGS: "tags",
+                UpdateFieldAction.STATUS: 'status',
+                UpdateFieldAction.PRIORITY: 'priority',
+                UpdateFieldAction.DESCRIPTION: 'description',
+                UpdateFieldAction.DEADLINE: 'deadline',
+                UpdateFieldAction.TAGS: 'tags',
             }
 
             changed_field = field_map.get(action)
 
-            console.print("\n[green]Updated successfully.[/green]")
+            console.print('\n[green]Updated successfully.[/green]')
             print_task_summary(task, highlight_field=changed_field)
 
             typer.pause()
@@ -366,6 +353,6 @@ def interactive():
     while True:
         action = prompt_action()
         if action is MenuAction.EXIT:
-            console.print("[dim]Bye 👋[/dim]")
+            console.print('[dim]Bye 👋[/dim]')
             raise typer.Exit(code=0)
         handlers[action]()
