@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
+import questionary
 import typer
-from simple_term_menu import TerminalMenu
 
 from src.enums.priority_enum import PriorityEnum
 from src.enums.status_enum import StatusEnum
@@ -9,13 +9,13 @@ from src.enums.status_enum import StatusEnum
 
 def prompt_priority() -> PriorityEnum:
     options = [p.name.title() for p in PriorityEnum]
-    menu = TerminalMenu(options)
 
-    idx = menu.show()
-    if idx is None:
+    answer = questionary.select('Choose priority: ', choices=options).ask()
+
+    if answer is None:
         raise typer.Abort()
 
-    return PriorityEnum[options[idx].upper()]
+    return PriorityEnum[answer.upper()]
 
 
 def prompt_status() -> StatusEnum:
@@ -23,13 +23,12 @@ def prompt_status() -> StatusEnum:
     Prompt user to choose task status.
     """
     options = [s.value for s in StatusEnum]
-    menu = TerminalMenu(options)
+    answer = questionary.select('Choose status: ', choices=options).ask()
 
-    idx = menu.show()
-    if idx is None:
+    if answer is None:
         raise typer.Abort()
 
-    return StatusEnum(options[idx])
+    return StatusEnum(answer)
 
 
 def prompt_deadline_graphical() -> date | None:
@@ -46,21 +45,21 @@ def prompt_deadline_graphical() -> date | None:
         'Pick exact date (YYYY-MM-DD)',
     ]
 
-    idx = TerminalMenu(options).show()
-    if idx is None:
+    answer = questionary.select('Choose deadline: ', choices=options).ask()
+    if answer is None:
         raise typer.Abort()
 
     today = date.today()
 
-    if idx == 0:
+    if answer == 0:
         return None
-    if idx == 1:
+    if answer == 1:
         return today
-    if idx == 2:
+    if answer == 2:
         return today + timedelta(days=1)
-    if idx == 3:
+    if answer == 3:
         return today + timedelta(days=7)
-    if idx == 4:
+    if answer == 4:
         return today + timedelta(days=14)
 
     while True:
