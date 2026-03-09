@@ -1,9 +1,14 @@
-from typer import Typer
+from typing import TYPE_CHECKING
 
-from src.cli.commands.interactive import interactive
 from src.cli.commands.add_task import add_task
+from src.cli.commands.flow_update import update_task
+from src.cli.commands.interactive import interactive
 from src.cli.commands.list_tasks import list_tasks
 from src.cli.commands.remove_task import remove_task
+
+
+if TYPE_CHECKING:
+    from typer import Typer
 
 
 def register_commands(app: Typer) -> None:
@@ -11,3 +16,4 @@ def register_commands(app: Typer) -> None:
     app.command()(add_task)
     app.command()(remove_task)
     app.command()(interactive)
+    app.command()(update_task)

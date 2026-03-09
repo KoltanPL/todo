@@ -1,16 +1,38 @@
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
+from typing import TYPE_CHECKING
 
 import questionary
+from questionary import Style
 import typer
 
 from src.enums.priority_enum import PriorityEnum
 from src.enums.status_enum import StatusEnum
+from src.ui.console import console
+
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+style = Style([
+    ('highlighted', 'fg:#ffffff bg:#44475a bold'),
+    ('pointer', 'fg:#50fa7b bold'),
+    ('selected', 'fg:#50fa7b'),
+    ('question', 'bold'),
+])
+
+
+def prompt_description() -> str:
+    while True:
+        description = typer.prompt('Task description').strip()
+        if len(description) > 2:
+            return description
+        console.print('[red]Description must be at least 3 characters.[/red]')
 
 
 def prompt_priority() -> PriorityEnum:
     options = [p.name.title() for p in PriorityEnum]
 
-    answer = questionary.select('Choose priority: ', choices=options).ask()
+    answer = questionary.select('Choose priority: ', choices=options, style=style).ask()
 
     if answer is None:
         raise typer.Abort()
@@ -22,13 +44,13 @@ def prompt_status() -> StatusEnum:
     """
     Prompt user to choose task status.
     """
-    options = [s.value for s in StatusEnum]
-    answer = questionary.select('Choose status: ', choices=options).ask()
+    options = [s.value.title().replace('_', ' ') for s in StatusEnum]
+    answer = questionary.select('Choose status: ', choices=options, style=style).ask()
 
     if answer is None:
         raise typer.Abort()
 
-    return StatusEnum(answer)
+    return StatusEnum(answer.lower().replace(' ', '_'))
 
 
 def prompt_deadline_graphical() -> date | None:
@@ -45,21 +67,21 @@ def prompt_deadline_graphical() -> date | None:
         'Pick exact date (YYYY-MM-DD)',
     ]
 
-    answer = questionary.select('Choose deadline: ', choices=options).ask()
+    answer = questionary.select('Choose deadline: ', choices=options, style=style).ask()
     if answer is None:
         raise typer.Abort()
 
-    today = date.today()
+    today = datetime.now(UTC).date()
 
-    if answer == 0:
+    if answer == 'No deadline':
         return None
-    if answer == 1:
+    if answer == 'Today':
         return today
-    if answer == 2:
+    if answer == 'Tomorrow':
         return today + timedelta(days=1)
-    if answer == 3:
+    if answer == 'In 7 days':
         return today + timedelta(days=7)
-    if answer == 4:
+    if answer == 'In 14 days':
         return today + timedelta(days=14)
 
     while True:
@@ -67,15 +89,14 @@ def prompt_deadline_graphical() -> date | None:
 
         try:
             parsed = date.fromisoformat(raw)
-
+        except ValueError:
+            typer.echo('Invalid format. Example: 2026-03-01')
+        else:
             if parsed <= today:
                 typer.echo('Date must be in the future.')
                 continue
 
             return parsed
-
-        except ValueError:
-            typer.echo('Invalid format. Example: 2026-03-01')
 
 
 def prompt_tags() -> list[str]:
@@ -88,3 +109,7 @@ def prompt_tags() -> list[str]:
         return []
 
     return [tag.strip() for tag in raw.split(',') if tag.strip()]
+
+
+def prompt_menu(choices: Iterable[str]) -> str:
+    return questionary.select('Menu', choices=list(choices), style=style).ask()

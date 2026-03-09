@@ -1,8 +1,13 @@
+from typing import TYPE_CHECKING
+
 from rich import box
 from rich.table import Table
 
 from src.enums.priority_enum import PriorityEnum
-from src.todo_list.todo_list import TodoList
+
+
+if TYPE_CHECKING:
+    from src.todo_list.todo_list import TodoList
 
 
 def build_tasks_table(tasks: TodoList) -> Table:

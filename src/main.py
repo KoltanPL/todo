@@ -1,5 +1,7 @@
 import typer
+
 from src.cli.registry import register_commands
+
 
 app = typer.Typer(name='todo-app', help='A professional Todo CLI application')
 

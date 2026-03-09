@@ -3,21 +3,18 @@ import typer
 from src.cli.state import get_todo_list
 from src.task.task import Todo
 from src.ui.console import console
-from src.ui.prompts import prompt_priority, prompt_status, prompt_deadline_graphical, prompt_tags
+from src.ui.prompts import prompt_deadline_graphical, prompt_description, prompt_priority, prompt_status, prompt_tags
 
 
 def add_task() -> None:
-    while True:
-        description = typer.prompt('Task description').strip()
-        if len(description) > 2:
-            break
+    description = prompt_description()
 
     priority = prompt_priority()
     status = prompt_status()
 
     try:
         deadline = prompt_deadline_graphical()
-    except typer.Abort() as err:
+    except typer.Abort as err:
         console.print('[yellow]Operation cancelled.[/yellow]')
         raise typer.Exit() from err
 

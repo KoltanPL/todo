@@ -1,49 +1,34 @@
-from collections.abc import Callable
-from enum import StrEnum
+from typing import TYPE_CHECKING, Never
 
 import typer
 
 from src.cli.commands.add_task import add_task
+from src.cli.commands.flow_update import update_task
 from src.cli.commands.list_tasks import list_tasks
 from src.cli.commands.remove_task import remove_task
 from src.ui.console import console
+from src.ui.prompts import prompt_menu
 
 
-class MenuAction(StrEnum):
-    ADD = '1'
-    LIST = '2'
-    REMOVE = '3'
-    EXIT = '4'
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
-def prompt_action() -> MenuAction:
-    console.print('\n[bold]Menu[/bold]')
-    console.print('  [cyan]1[/cyan] Add task')
-    console.print('  [cyan]2[/cyan] Show tasks')
-    console.print('  [cyan]3[/cyan] Remove task')
-    console.print('  [cyan]4[/cyan] Exit')
-
-    def _coerce(raw: str) -> MenuAction:
-        try:
-            return MenuAction(raw.strip())
-        except ValueError:
-            raise typer.BadParameter('Choose 1-5')
-
-    return typer.prompt('Choose', default=MenuAction.LIST.value, value_proc=_coerce)
+def exit_app() -> Never:
+    console.print('[dim]Bye 👋[/dim]')
+    raise typer.Exit()
 
 
 def interactive() -> None:
-    handlers: dict[MenuAction, Callable[[], None]] = {
-        MenuAction.ADD: add_task,
-        MenuAction.LIST: list_tasks,
-        MenuAction.REMOVE: remove_task,
+    handlers: dict[str, Callable[[], None]] = {
+        'Add task': add_task,
+        'Show tasks': list_tasks,
+        'Update task': update_task,
+        'Remove task': remove_task,
+        'Exit': exit_app,
     }
 
     while True:
-        action = prompt_action()
-
-        if action is MenuAction.EXIT:
-            console.print('[dim]Bye 👋[/dim]')
-            raise typer.Exit()
+        action = prompt_menu(handlers.keys())
 
         handlers[action]()
