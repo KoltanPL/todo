@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import typer
 
 from src.cli.commands.print_task_summary import print_task_summary
-from src.cli.state import get_todo_list
+from src.cli.state import get_todo_list, save_todo_list
 from src.ui.console import console
 from src.ui.prompts import (
     prompt_deadline_graphical,
@@ -97,4 +97,5 @@ def update_task() -> None:
             typer.pause()
 
         except BackToMenuError:
+            save_todo_list()
             return

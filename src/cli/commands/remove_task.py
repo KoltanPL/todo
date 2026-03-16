@@ -1,6 +1,6 @@
 import typer
 
-from src.cli.state import get_todo_list
+from src.cli.state import get_todo_list, save_todo_list
 from src.ui.console import console
 
 
@@ -21,5 +21,6 @@ def remove_task() -> None:
 
     task = todo_list.tasks[parsed_id]
     todo_list.remove(task.idx)
+    save_todo_list()
 
     console.print(f'[green]Task removed:[/green] {task.description}')

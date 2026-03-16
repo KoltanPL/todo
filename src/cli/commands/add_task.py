@@ -1,6 +1,6 @@
 import typer
 
-from src.cli.state import get_todo_list
+from src.cli.state import get_todo_list, save_todo_list
 from src.task.task import Todo
 from src.ui.console import console
 from src.ui.prompts import prompt_deadline_graphical, prompt_description, prompt_priority, prompt_status, prompt_tags
@@ -24,5 +24,6 @@ def add_task() -> None:
 
     todo_list = get_todo_list()
     todo_list.add(task)
+    save_todo_list()
 
     console.print(f'[green]Added: [/green] {task.description} (id={(str(task.idx)[:8])})')
