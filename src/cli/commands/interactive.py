@@ -11,7 +11,7 @@ from src.ui.prompts import prompt_menu
 
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
+    from collections.abc import Callable  # pragma: no cover
 
 
 def exit_app() -> Never:

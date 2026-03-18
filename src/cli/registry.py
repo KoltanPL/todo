@@ -8,7 +8,7 @@ from src.cli.commands.remove_task import remove_task
 
 
 if TYPE_CHECKING:
-    from typer import Typer
+    from typer import Typer  # pragma: no cover
 
 
 def register_commands(app: Typer) -> None:

@@ -7,7 +7,7 @@ from src.ui.console import console
 
 
 if TYPE_CHECKING:
-    from src.task.task import Todo
+    from src.task.task import Todo  # pragma: no cover
 
 
 def print_task_summary(task: Todo, highlight_field: str | None = None) -> None:

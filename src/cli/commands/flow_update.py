@@ -16,9 +16,9 @@ from src.ui.prompts import (
 
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
+    from collections.abc import Callable  # pragma: no cover
 
-    from src.task.task import Todo
+    from src.task.task import Todo  # pragma: no cover
 
 
 class BackToMenuError(Exception):

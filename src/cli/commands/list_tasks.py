@@ -6,7 +6,7 @@ from src.ui.tables import build_tasks_table
 
 
 if TYPE_CHECKING:
-    from rich.table import Table
+    from rich.table import Table  # pragma: no cover
 
 
 def list_tasks() -> None:
