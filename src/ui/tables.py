@@ -7,7 +7,7 @@ from src.enums.priority_enum import PriorityEnum
 
 
 if TYPE_CHECKING:
-    from src.todo_list.todo_list import TodoList
+    from src.todo_list.todo_list import TodoList  # pragma: no cover
 
 
 def build_tasks_table(tasks: TodoList) -> Table:

@@ -11,7 +11,7 @@ from src.ui.console import console
 
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable  # pragma: no cover
 
 style = Style([
     ('highlighted', 'fg:#ffffff bg:#44475a bold'),
@@ -42,7 +42,7 @@ def prompt_priority() -> PriorityEnum:
 
 def prompt_status() -> StatusEnum:
     """
-    Prompt user to choose task status.
+    User's prompt to choose a task status.
     """
     options = [s.value.title().replace('_', ' ') for s in StatusEnum]
     answer = questionary.select('Choose status: ', choices=options, style=style).ask()
@@ -55,7 +55,7 @@ def prompt_status() -> StatusEnum:
 
 def prompt_deadline_graphical() -> date | None:
     """
-    Prompt user for deadline using graphical menu.
+    User's prompt for a deadline using a graphical menu.
     """
 
     options = [
@@ -101,7 +101,7 @@ def prompt_deadline_graphical() -> date | None:
 
 def prompt_tags() -> list[str]:
     """
-    Prompt user for comma-separated tags.
+    User's prompt for comma-separated tags.
     """
     raw = typer.prompt('Task tags (comma separated)', default='').strip()
 
