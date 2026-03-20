@@ -15,11 +15,30 @@ if TYPE_CHECKING:
 
 
 def exit_app() -> Never:
+    """Exit the application.
+
+    Displays a goodbye message and terminates the CLI application.
+
+    Raises:
+        typer.Exit: Always raised to stop program execution.
+    """
     console.print('[dim]Bye 👋[/dim]')
     raise typer.Exit()
 
 
 def interactive() -> None:
+    """Run the interactive CLI menu loop.
+
+    Displays a menu with available actions and executes the selected command.
+    The loop runs indefinitely until the user chooses the exit option.
+
+    Available actions:
+        - Add task
+        - Show tasks
+        - Update task
+        - Remove task
+        - Exit
+    """
     handlers: dict[str, Callable[[], None]] = {
         'Add task': add_task,
         'Show tasks': list_tasks,

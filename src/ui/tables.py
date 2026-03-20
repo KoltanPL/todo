@@ -11,6 +11,18 @@ if TYPE_CHECKING:
 
 
 def build_tasks_table(tasks: TodoList) -> Table:
+    """Build a formatted table representation of tasks.
+
+    Creates a rich table displaying task attributes such as status,
+    priority, description, deadline, and tags. Priority values are
+    color-coded for better readability.
+
+    Args:
+        tasks (TodoList): Collection of tasks to display.
+
+    Returns:
+        Table: Renderable rich table with task data.
+    """
     table = Table(title='Todo List', show_header=True, header_style='bold magenta', box=box.SIMPLE)
 
     table.add_column('Id', style='dim', no_wrap=True)

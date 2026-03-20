@@ -10,6 +10,11 @@ if TYPE_CHECKING:
 
 
 def list_tasks() -> None:
+    """Display all tasks in a table format.
+
+    Retrieves the current todo list and prints it as a formatted table.
+    If no tasks are available, a warning message is displayed instead.
+    """
     todo_list = get_todo_list()
     if not len(todo_list):
         console.print('[yellow]No tasks found.[/yellow]')

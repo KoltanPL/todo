@@ -120,18 +120,35 @@ def test_get_todo_list_returns_global(monkeypatch: pytest.MonkeyPatch) -> None:
     assert state.get_todo_list() is dummy
 
 
-def test_module_import_loads_todo_list(monkeypatch: pytest.MonkeyPatch, temp_file: Path) -> None:
+def test_module_import_does_not_loads_todo_list(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv('STORAGE_PATH_ENV', raising=False)
+
+    module = cast('type(state_module)', importlib.reload(state_module))
+
+    assert module._todo_list is None
+
+
+def test_get_todo_list_loads_once_after_import(monkeypatch: pytest.MonkeyPatch, temp_file: Path) -> None:
     temp_file.write_text('{}', encoding='utf-8')
     monkeypatch.setenv('STORAGE_PATH_ENV', str(temp_file))
 
     class Dummy:
         pass
 
+    calls = {'count': 0}
+
     def fake_from_json(_: str) -> Dummy:
+        calls['count'] += 1
         return Dummy()
 
     monkeypatch.setattr('src.todo_list.todo_list.TodoList.from_json', fake_from_json)
 
     module = cast('type(state_module)', importlib.reload(state_module))
 
-    assert module.get_todo_list() is not None
+    assert module._todo_list is None
+
+    first = module.get_todo_list()
+    second = module.get_todo_list()
+
+    assert first is second
+    assert calls['count'] == 1

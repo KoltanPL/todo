@@ -22,6 +22,14 @@ style = Style([
 
 
 def prompt_description() -> str:
+    """Prompt the user for a task description.
+
+    Repeats the prompt until a valid description (at least 3 characters)
+    is provided.
+
+    Returns:
+        str: Validated task description.
+    """
     while True:
         description = typer.prompt('Task description').strip()
         if len(description) > 2:
@@ -30,6 +38,16 @@ def prompt_description() -> str:
 
 
 def prompt_priority() -> PriorityEnum:
+    """Prompt the user to select a task priority.
+
+    Displays a graphical selection menu with available priorities.
+
+    Returns:
+        PriorityEnum: Selected priority.
+
+    Raises:
+        typer.Abort: If the user cancels the selection.
+    """
     options = [p.name.title() for p in PriorityEnum]
 
     answer = questionary.select('Choose priority: ', choices=options, style=style).ask()
@@ -41,8 +59,15 @@ def prompt_priority() -> PriorityEnum:
 
 
 def prompt_status() -> StatusEnum:
-    """
-    User's prompt to choose a task status.
+    """Prompt the user to select a task status.
+
+    Displays a graphical selection menu with available statuses.
+
+    Returns:
+        StatusEnum: Selected status.
+
+    Raises:
+        typer.Abort: If the user cancels the selection.
     """
     options = [s.value.title().replace('_', ' ') for s in StatusEnum]
     answer = questionary.select('Choose status: ', choices=options, style=style).ask()
@@ -54,8 +79,17 @@ def prompt_status() -> StatusEnum:
 
 
 def prompt_deadline_graphical() -> date | None:
-    """
-    User's prompt for a deadline using a graphical menu.
+    """Prompt the user to select or input a task deadline.
+
+    Provides predefined options (today, tomorrow, etc.) or allows the user
+    to enter a custom date in ISO format (YYYY-MM-DD). Custom dates must
+    be in the future.
+
+    Returns:
+        date | None: Selected deadline or None if no deadline is chosen.
+
+    Raises:
+        typer.Abort: If the user cancels the selection.
     """
 
     options = [
@@ -100,8 +134,12 @@ def prompt_deadline_graphical() -> date | None:
 
 
 def prompt_tags() -> list[str]:
-    """
-    User's prompt for comma-separated tags.
+    """Prompt the user for task tags.
+
+    Accepts a comma-separated string and returns a cleaned list of tags.
+
+    Returns:
+        list[str]: List of trimmed, non-empty tags.
     """
     raw = typer.prompt('Task tags (comma separated)', default='').strip()
 
@@ -112,4 +150,15 @@ def prompt_tags() -> list[str]:
 
 
 def prompt_menu(choices: Iterable[str]) -> str:
+    """Prompt the user to select an option from a menu.
+
+    Args:
+        choices (Iterable[str]): Available menu options.
+
+    Returns:
+        str: Selected option.
+
+    Raises:
+        typer.Abort: If the user cancels the selection.
+    """
     return questionary.select('Menu', choices=list(choices), style=style).ask()

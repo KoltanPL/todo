@@ -5,6 +5,12 @@ from src.ui.console import console
 
 
 def remove_task() -> None:
+    """Remove a task selected by the user.
+
+    Prompts the user for a task ID, validates the input, and removes the
+    corresponding task from the todo list. If the input is invalid or out
+    of range, an error message is displayed and the operation is aborted.
+    """
     raw_id = typer.prompt('Task id').strip()
 
     try:

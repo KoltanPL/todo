@@ -152,6 +152,9 @@ def test_update_task_back_immediately(monkeypatch: pytest.MonkeyPatch, sample_ta
 
 def test_update_task_deadline_abort(monkeypatch: pytest.MonkeyPatch, sample_task: Todo) -> None:
     todo_list = DummyTodoList([sample_task])
+    printed: list[tuple[object, ...]] = []
+    pauses = {'count': 0}
+    saved = {'called': False}
 
     def fake_get() -> DummyTodoList:
         return todo_list
@@ -167,17 +170,31 @@ def test_update_task_deadline_abort(monkeypatch: pytest.MonkeyPatch, sample_task
     def fake_deadline() -> None:
         raise typer.Abort()
 
+    def fake_print(*args: object, **kwargs: object) -> None:
+        printed.append(args)
+
+    def fake_pause() -> None:
+        pauses['count'] += 1
+
+    def fake_save() -> None:
+        saved['called'] = True
+
     monkeypatch.setattr('src.cli.commands.flow_update.get_todo_list', fake_get)
     monkeypatch.setattr('src.cli.commands.flow_update.typer.prompt', fake_prompt)
     monkeypatch.setattr('src.cli.commands.flow_update.prompt_menu', fake_menu)
     monkeypatch.setattr('src.cli.commands.flow_update.prompt_deadline_graphical', fake_deadline)
     monkeypatch.setattr('src.cli.commands.flow_update.console.clear', lambda: None)
     monkeypatch.setattr('src.cli.commands.flow_update.print_task_summary', lambda _: None)
-    monkeypatch.setattr('src.cli.commands.flow_update.console.print', noop)
-    monkeypatch.setattr('src.cli.commands.flow_update.typer.pause', lambda: None)
-    monkeypatch.setattr('src.cli.commands.flow_update.save_todo_list', lambda: None)
+    monkeypatch.setattr('src.cli.commands.flow_update.console.print', fake_print)
+    monkeypatch.setattr('src.cli.commands.flow_update.typer.pause', fake_pause)
+    monkeypatch.setattr('src.cli.commands.flow_update.save_todo_list', fake_save)
 
     update_task()
+
+    assert sample_task.deadline is None
+    assert not any('Updated successfully.' in str(call) for call in printed)
+    assert pauses['count'] == 0
+    assert saved['called'] is True
 
 
 def test_update_priority(monkeypatch: pytest.MonkeyPatch, sample_task: Todo) -> None:

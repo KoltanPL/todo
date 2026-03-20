@@ -7,6 +7,18 @@ from src.ui.prompts import prompt_deadline_graphical, prompt_description, prompt
 
 
 def add_task() -> None:
+    """
+    Create and persist a new task based on user input.
+
+    The function interactively prompts the user for task details such as
+    description, priority, status, deadline, and tags. It then creates a
+    Todo object, adds it to the current todo list, and saves the updated list.
+
+    If the deadline prompt is cancelled, the operation is aborted gracefully.
+
+    Raises:
+        typer.Exit: If the user cancels the deadline input.
+    """
     description = prompt_description()
 
     priority = prompt_priority()

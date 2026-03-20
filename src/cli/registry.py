@@ -12,6 +12,15 @@ if TYPE_CHECKING:
 
 
 def register_commands(app: Typer) -> None:
+    """
+    Register all CLI commands in the Typer application.
+
+    This function binds command handlers to the provided Typer instance,
+    making them available as CLI commands.
+
+    Args:
+        app (Typer): The Typer application instance.
+    """
     app.command()(list_tasks)
     app.command()(add_task)
     app.command()(remove_task)

@@ -11,6 +11,16 @@ if TYPE_CHECKING:
 
 
 def print_task_summary(task: Todo, highlight_field: str | None = None) -> None:
+    """Display a summary of a single task in a formatted table.
+
+    Renders task details such as status, priority, description, deadline,
+    and tags using a rich table. Optionally highlights a selected field.
+
+    Args:
+        task (Todo): Task to display.
+        highlight_field (str | None): Name of the field to highlight
+            (e.g. "status", "priority"). If None, no field is highlighted.
+    """
     console.print()
 
     table = Table(title='Current Task', box=box.ROUNDED, show_header=False)
